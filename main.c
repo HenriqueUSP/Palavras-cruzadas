@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-char m[50][50];
+char m[50][50]; //matriz variavel global, nao precisa declarar nas funcoes
 
 struct info{
 char pergunta[50];
@@ -15,7 +15,7 @@ int main()
 int n;
 int i, j;
 
-for(i=1; i<50; i++){ //define os espaços vazios da matriz
+for(i=1; i<50; i++){ //define os espaÃ§os vazios da matriz
         for(j=1; j<50; j++){
             m[i][j] = '-';
         }}
@@ -25,7 +25,7 @@ impressora(m);
 printf("Quantas palavras quer utilizar ?\n");
 scanf("%d", &n);
 
-while(n != 0){
+while(n != 0){ //vai rodar o mesmo tanto que a quantidade de palavras solicitado
 
     preencher_matriz();
 
@@ -50,7 +50,7 @@ void impressora(char mat[50][50]){
 void preencher_matriz(){
 
 struct info p;
-char resposta[10];
+char resposta[10]; //nao esta dentro do struct pensando na alocacao dinamica
 //int lugar1
 //int lugar2
 //int orienta
@@ -70,7 +70,7 @@ printf("lugar:\n");
 scanf("%d", &p.lugar1);
 scanf("%d", &p.lugar2);
 
-if(p.orientacao == 1){
+if(p.orientacao == 1){ //vertical
 
     j = p.lugar2;
 
@@ -79,9 +79,9 @@ if(p.orientacao == 1){
         }
 }
 
-if(p.orientacao == 2){
+if(p.orientacao == 2){  //horizontal
 
- i = p.lugar2;
+ i = p.lugar2; 
 
     for(j=p.lugar1, k=0 ; j<(p.lugar1 + 10) , k < 10; j++ , k++){
         m[i][j] = resposta[k];
