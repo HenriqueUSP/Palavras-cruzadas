@@ -1,55 +1,172 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 char m[15][15]; //matriz de referencia
 
 char Mjogo[15][15]; //matriz de jogo
 
-struct info{
-char pergunta[50];
+struct coord {//transformada em coord pois sem isso não dá pra fazer a impressão de dicas ou fazer a melhoria de escolha da jogada
+char resposta[50];
+char dica[100];
 int orientacao;
 int lugar1;
 int lugar2;
-};
+int acerto;
+}info[50];
 
-int main()
-{
-int n; //quantidade de palavras
-int i, j; //acessar matriz
-int v; //condicao do while
+void impdica(int k){//imprime as dicas, inicio e fim
+int i=1,lf,cf;
+while(i<=k){
+    if(info[i].acerto==0){
+            if(info[i].orientacao==1){
+                lf=info[i].lugar1 + strlen(info[i].resposta)-1;
+                cf=info[i].lugar2;
+            }
+            else{
+                cf=info[i].lugar2+strlen(info[i].resposta)-1;
+                lf=info[i].lugar1;
+            }
 
-for(i=0; i<15; i++){ //define os espaÃ§os vazios da matriz
-        for(j=0; j<15; j++){
-            m[i][j] = '-';
-        }}
-
-printf("Quantas palavras quer utilizar ?\n");
-scanf("%d", &n);
-
-while(n != 0){ //coloca quantas palavras na matriz quanto forem desejadas
-
-    preencher_matriz();
-
-    n = n - 1;
+        printf(" N: %d \n Inicio: %d %d \n fim: %d %d \n Dica: %2s \n\n", i, info[i].lugar1, info[i].lugar2, lf, cf, info[i].dica);
+    }
+    i++;
 }
+
+
+}
+int compara(){
+int c=0,b=0,p=1;
+while(b<15){
+    while(c<15){
+        if(m[b][c]!=Mjogo[b][c]){
+            p=0;
+        }
+        c++;
+    }
+    b++;
+    c=0;
+}
+return p;
+}
+
+void impressora(char mat[15][15]){ //imprime a matriz
+    int i=0,j=0;
+    for(i=0; i<15; i++){
+        for(j=0; j<15; j++){
+            printf("%2c", mat[i][j]);
+        }
+            printf("\n");
+        }
+}
+
+void preencher_matriz(int n){
+
+int i, j, k, l, validade;
+//char dicacopia[100];
+
+//printf("pergunta:\n");
+//scanf("%s", p.pergunta);
+
+printf("resposta:\n");
+scanf("%s", info[n].resposta);
+
+info[n].orientacao=0;
+
+while((info[n].orientacao!=1)&&(info[n].orientacao!=2)){//impede jogadas inválidas
+
+printf("orientacao:\n");
+
+scanf("%d", &info[n].orientacao);
+
+if((info[n].orientacao!=1)&&(info[n].orientacao!=2)){
+
+    printf("escreva um valor valido(1-horizontal, 2-vertical)\n");
+}
+
+}
+validade=0;
+
+printf("lugar:\n");
+
+while(validade!=1){//impede jogadas inválidas
+scanf("%d", &info[n].lugar1);
+scanf("%d", &info[n].lugar2);
+if(info[n].orientacao == 1){
+if((info[n].lugar2+strlen(info[n].resposta)>15)||(info[n].lugar1>14)||(info[n].lugar1<0)||(info[n].lugar2>14)||(info[n].lugar2<0)){
+    validade=0;
+    printf("insira valores válidos\n");
+}
+else{
+    validade=1;
+}
+}else{
+    if((info[n].lugar1+strlen(info[n].resposta)>15)||(info[n].lugar1>14)||(info[n].lugar1<0)||(info[n].lugar2>14)||(info[n].lugar2<0)){
+    validade=0;
+    printf("insira valores válidos\n");
+}
+else{
+    validade=1;
+}}}
+
+printf("Dica:\n");//dica de cada palavra
+//fgets(info[n].dica,100,stdin);
+scanf("%s",info[n].dica );
+//gets(info[n].dica);
+printf("\n");
+
+//strcpy(info[n].dica, dicacopia);
+
+if(info[n].orientacao == 1){ //imprime a palavra na matriz (vertical)
+
+    j = info[n].lugar2;
+    l=strlen(info[n].resposta);
+    for(i=info[n].lugar1, k=0 ; i<(info[n].lugar1 + l) , k < l; i++ , k++){
+
+        m[i][j] = info[n].resposta[k]; //imprime a palavra dada no lugar desejad
+
+        if(m[i][j] == NULL){ //troca todos os espacos vazios por -
+            m[i][j] = '-';
+        }
+
+        }
+
+}
+
+if(info[n].orientacao == 2){ //imprime a palavra na matriz (horizontal)
+
+ i = info[n].lugar1;
+    l=strlen(info[n].resposta);
+    for(j=info[n].lugar2, k=0 ; j<(info[n].lugar1 + l) , k < l; j++ , k++){
+
+        m[i][j] = info[n].resposta[k]; //imprime a palavra dada no lugar desejado
+
+        if(m[i][j] == NULL){ //troca todos os espacos vazios por -
+            m[i][j] = '-';
+        }
+
+        }
+
+}
+
+for(i=0; i<15; i++){ //transforma a matriz de jogo em uma copia da matriz de referencia
+        for(j=0; j<15; j++){
+            Mjogo[i][j] = m[i][j];
+        }
+        }
+
+for(i=0; i<15; i++){  //transforma tudo diferente de - em um simbolo na matriz de jogo, no caso, 0
+        for(j=0; j<15; j++){
+
+            if(Mjogo[i][j] != '-'){
+        Mjogo[i][j] = '0';}
+
+        }
+        }
 
 impressora(m);
 
-printf("\n\n\n");
 
-impressora(Mjogo);
-
-v = 2;
-
-while(v != 1){ //roda o jogo
-
-    jogo();
-
-    impressora(Mjogo);
-
-}
-
-//v = jogo();
 }
 
 void jogo(){ //Funcao em que ocorre a troca dos espacos com 0 pelas palavras na matriz
@@ -68,9 +185,7 @@ if(d[1] == d[3]){ //horizontal
     i = d[1];
 
   /*  for(j=d[2]; j <= d[4]; j++){ //verifica se todos os espacos selecionados contem 0
-
         if(Mjogo[i][j] != '0'){
-
             return;
         }
     } */
@@ -98,9 +213,7 @@ if(d[2] == d[4]){ //vertical
     j = d[2];
 
   /*  for(i=d[1]; i <= d[3]; i++){ //verifica se todos os espacos selecionados contem 0
-
         if(Mjogo[i][j] != '0'){
-
             return;
         }
     } */
@@ -125,87 +238,60 @@ if(d[2] == d[4]){ //vertical
 
 }
 
+int main()
+{
+int n; //quantidade de palavras
+int i, j; //acessar matriz
+int k,v=2; //condicao do while
+char dicacopia[10];
 
+/*scanf("%100[^\n]s", info[1].dica);
+printf("%s\n", info[1].dica);*/
 
-void impressora(char mat[15][15]){ //imprime a matriz
-    int i=0,j=0;
-    for(i=0; i<15; i++){
+for(i=0; i<15; i++){ //define os espaços vazios da matriz
         for(j=0; j<15; j++){
-            printf("%2c", mat[i][j]);
-        }
-            printf("\n");
-        }
-}
-
-
-void preencher_matriz(){
-
-struct info p;
-char resposta[10];
-//int lugar1
-//int lugar2
-//int orienta
-
-int i, j, k;
-
-//printf("pergunta:\n");
-//scanf("%s", p.pergunta);
-
-printf("resposta:\n");
-scanf("%s", resposta);
-
-printf("orientacao:\n");
-scanf("%d", &p.orientacao);
-
-printf("lugar:\n");
-scanf("%d", &p.lugar1);
-scanf("%d", &p.lugar2);
-
-if(p.orientacao == 1){ //imprime a palavra na matriz (vertical)
-
-    j = p.lugar2;
-
-    for(i=p.lugar1, k=0 ; i<(p.lugar1 + 10) , k < 10; i++ , k++){
-
-        m[i][j] = resposta[k]; //imprime a palavra dada no lugar desejad
-
-        if(m[i][j] == NULL){ //troca todos os espacos vazios por -
             m[i][j] = '-';
-        }
+        }}
 
-        }
+printf("Quantas palavras quer utilizar ?\n");
+scanf("%d", &n);
+k=n;
 
+while(n != 0){ //coloca quantas palavras na matriz quanto forem desejadas
+
+    preencher_matriz(n);
+
+/*printf("Dica:\n");//dica de cada palavra
+//fgets(info[n].dica,100,stdin);
+scanf("%100[^\n]s", dicacopia);
+//gets(info[n].dica);
+printf("\n");
+strcpy(info[n].dica, dicacopia);
+impressora(m);*/
+
+    n = n - 1;
 }
 
-if(p.orientacao == 2){ //imprime a palavra na matriz (horizontal)
+impressora(m);
 
- i = p.lugar2;
+printf("\n\n\n");
 
-    for(j=p.lugar1, k=0 ; j<(p.lugar1 + 10) , k < 10; j++ , k++){
+impressora(Mjogo);
 
-        m[i][j] = resposta[k]; //imprime a palavra dada no lugar desejado
 
-        if(m[i][j] == NULL){ //troca todos os espacos vazios por -
-            m[i][j] = '-';
-        }
+while(v != 1){ //roda o jogo
 
-        }
+    impdica(k);
 
+    jogo();
+
+    impressora(Mjogo);
+
+    v=compara();
 }
-
-for(i=0; i<15; i++){ //transforma a matriz de jogo em uma copia da matriz de referencia
-        for(j=0; j<15; j++){
-            Mjogo[i][j] = m[i][j];
-        }
-        }
-
-for(i=0; i<15; i++){  //transforma tudo diferente de - em um simbolo na matriz de jogo, no caso, 0
-        for(j=0; j<15; j++){
-
-            if(Mjogo[i][j] != '-'){
-        Mjogo[i][j] = '0';}
-
-        }
-        }
-
+if(v==1){
+  printf("\nParabens, voce venceu!!!!");
+  return 0;
+}
+//v = jogo();
 }
